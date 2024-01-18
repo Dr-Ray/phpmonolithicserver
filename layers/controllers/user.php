@@ -23,14 +23,14 @@ class User {
 
     function createUser($data) {
         $email = $data['email']; 
-        $fullname = $data['fullname'];
-        $phone = $data['phone']; 
-        $password = $data['phone']; 
+        $fullname = $data['name'];
+        $username = $data['username']; 
+        $password = $data['password']; 
 
         $newUser = $this->db->addData('users',[
             "email" =>$email,
             "name" =>$fullname,
-            "phone" =>$phone,
+            "username" =>$username,
             "password" =>$password
         ]);
 
@@ -66,6 +66,4 @@ class User {
             return False;
         }
     }
-
-    
 }

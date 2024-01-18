@@ -6,13 +6,14 @@ class ROUTES {
     public function openRoutes($logic) {
         $this->logic = $logic;
         $uri = parse_url($_SERVER['REQUEST_URI']);
-        
+
         $method = $_SERVER['REQUEST_METHOD'];
 
-        // $uri = explode('/PHPMONOLITHICSERVER', $_SERVER['REQUEST_URI']);
+        $uri = explode('/'.SERVER_NAME, $_SERVER['REQUEST_URI'])[1];
         $found = false;
+
         foreach($this->routes as $path => $callback) {
-            if($path !== $uri['path']) continue;
+            if($path !== $uri) continue;
             $found = true;
             call_user_func($callback, $this, $this->logic, $_GET, $_POST);
         }

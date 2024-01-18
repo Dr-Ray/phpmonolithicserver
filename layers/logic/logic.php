@@ -8,7 +8,7 @@ class Logic {
        if(ENABLE_MESSAGING) {
             $this->messaging = new Messaging();
        }
-    }
+    } 
 
     function hashData($data) {
         return sha1($data);
@@ -37,8 +37,14 @@ class Logic {
         }
     }
 
+    function createUsername(String $username) {
+        $f1 = explode(" ", $username);
+        $f1 = $f1[0].rand(100000, 999999);
+        return '@'.$f1;
+    }
+
     function Login($data) {
-        $email = $this->validateInput($data['email'],'email');
+        $email = $this->validateInput($data['email'], 'email');
         $password = $data['password'];
         $user = $this->user->get($email);
 
@@ -46,32 +52,44 @@ class Logic {
             if($this->verify_password($user['password'], $password)) {
                 // create a new session object 
                 $_SESSION['id'] = $user['id'];
-                return json_encode([
+                return [
                     "status"=>"success",
                     "message"=>"Login successful"
-                ]);
+                ];
             }else{
-                return json_encode([
+                return [
                     "status"=>"error",
                     "message"=>"Incorrect email or password"
-                ]);
+                ];
             }
         }else{
-            return json_encode([
+            return [
                 "status"=>"error",
                 "message"=>"User not found"
-            ]);
+            ];
         }
     }
 
     function Register($data) {
         $data = [
             "email" => $this->validateInput($data['email'],'email'),
-            "fullname" => $this->validateInput($data['fullname']),
-            "phone" => $this->validateInput($data['phone']),
-            "password" => $this->hashData($data['password'])
+            "name" => $this->validateInput($data['name']),
+            "password" => $this->hashData($data['password']),
+            "username" => $this->createUsername($data['name'])
         ];
 
         $newUser = $this->user->createUser($data);
+
+        if($newUser) {
+            return [
+                "status"=>"success",
+                "message"=>"Registration successful"
+            ];
+        }else{
+            return [
+                "status"=>"error",
+                "message"=>"Unable to register user please try again"
+            ];
+        }
     }
 }

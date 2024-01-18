@@ -3,18 +3,17 @@ include 'config/config.php';
 include 'layers/database/database.php';
 include 'config/path.php';
 
-// $db = new Database($db_param);
+$db = new Database($db_param);
 $routes = new ROUTES();
-$logic = new Logic($db='');
+$logic = new Logic($db);
 
 
 $routes->get('/', function($routes) {
     return $routes->view('index');
 });
 
-$routes->get('/logins', function($router) {
-    $data = $_GET['user'];
-    return $router->view('login', $data);
+$routes->get('/login', function($router) {
+    return $router->view('login');
 });
 
 $routes->get('/signup', function($routes) {
@@ -29,30 +28,38 @@ $routes->post('/login', function($routes, $logic) {
     $json = file_get_contents('php://input');
     $data = json_decode($json, true);
 
-    var_dump($_POST);
+    $login = $logic->login($data);
 
-    // $login = $logic->login($data);
+    if($login['status'] == 'success') {
+        echo json_encode([
+            "status"=>$login['status'],
+            "message"=>$login['message']
+        ]);
+    }else{
+        echo json_encode([
+            "status"=>$login['status'],
+            "message"=>$login['message']
+        ]);
+    }
+});
 
-    // if($login['status'] == 'success') {
-    //     echo json_encode([
-    //         "status"=>"success",
-    //         "message"=>$login['message']
-    //     ]);
+$routes->post('/signup', function($routes, $logic) {
+    $json = file_get_contents('php://input');
+    $data = json_decode($json, true);
 
-    //     return json_encode([
-    //         "status"=>"success",
-    //         "message"=>$login['message']
-    //     ]);
-    // }else{
-    //     echo json_encode([
-    //         "status"=>"success",
-    //         "message"=>$login['message']
-    //     ]);
-    //     return json_encode([
-    //         "status"=>"success",
-    //         "message"=>$login['message']
-    //     ]);
-    // }
+    $login = $logic->Register($data);
+
+    if($login['status'] == 'success') {
+        echo json_encode([
+            "status"=>$login['status'],
+            "message"=>$login['message']
+        ]);
+    }else{
+        echo json_encode([
+            "status"=>$login['status'],
+            "message"=>$login['message']
+        ]);
+    }
 });
 
 // Initialize Routing 
